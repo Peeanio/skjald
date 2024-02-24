@@ -8,7 +8,7 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/widget"
 )
-var period_work int = 25
+var period_work int = 1
 var period_rest int = 5
 var period_lunch int = 30
 var start_time = time.Now()
@@ -56,7 +56,6 @@ func startPeriod(clock *widget.Label, period string){
 		end_time = start_time.Add(time.Minute * time.Duration(period_lunch))
 	}
 	remaining = time.Until(end_time)
-
 }
 
 func updateTime(clock *widget.Label) {
