@@ -12,7 +12,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 )
-var period_work int = 1
+var period_work int = 25
 var period_rest int = 5
 var period_lunch int = 30
 var start_time = time.Now()
@@ -30,6 +30,7 @@ func Main(starting_period string) {
 	notes := widget.NewMultiLineEntry()
 	notes.SetPlaceHolder("Enter notes...")
 	clock_container := container.NewVBox(clock, widget.NewButton("Skip", func() {
+		log.Println("skipped")
 		remaining = time.Until(time.Now())
 	}))
 	notesCont := container.NewVBox(widget.NewRichTextWithText("Notes for period"), notes)/*widget.NewTextSegment("Save", func() {
@@ -44,7 +45,6 @@ func Main(starting_period string) {
 	w.SetContent(content)
 	go func() {
 		for range time.Tick(time.Second) {
-			updateTime(clock)
 			if remaining.Seconds() < 1 {
 				last_period := period
 				length := 0
@@ -64,6 +64,7 @@ func Main(starting_period string) {
 				notes.SetText("")
 				startPeriod(clock, period)
 			}
+			updateTime(clock)
 		}
 	}()
 	w.ShowAndRun()
