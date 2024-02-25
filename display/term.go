@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"os"
 	"github.com/gen2brain/beeep"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/layout"
@@ -33,10 +34,7 @@ func Main(starting_period string) {
 		log.Println("skipped")
 		remaining = time.Until(time.Now())
 	}))
-	notesCont := container.NewVBox(widget.NewRichTextWithText("Notes for period"), notes)/*widget.NewTextSegment("Save", func() {
-		log.Println("Notes were:", notes.Text)
-		notes.SetText("")
-	}))*/
+	notesCont := container.NewVBox(widget.NewRichTextWithText("Notes for period"), notes)
 
 	content := container.New(layout.NewHBoxLayout(), clock_container, layout.NewSpacer(), notesCont)
 	updateTime(clock)
@@ -61,6 +59,7 @@ func Main(starting_period string) {
 				}
 				notify(fmt.Sprintf("%s is up! Next cycle is %d minutes", strings.Title(last_period), length))
 				log.Println("Notes were:", notes.Text)
+				write_notes(notes.Text)
 				notes.SetText("")
 				startPeriod(clock, period)
 			}
@@ -96,4 +95,15 @@ func notify(text string) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func write_notes(content string) {
+	f, err := os.OpenFile("notes.md", os.O_APPEND|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Println(err)
+	}
+	header := strings.Join([]string{"\n#", start_time.Format("03:04 PM"), " - ", end_time.Format("03:04 PM"), "\n"}, "")
+	f.WriteString(strings.Join([]string{header, content}, ""))
+
+	f.Close()
 }
