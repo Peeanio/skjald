@@ -32,6 +32,7 @@ func Main(starting_period string) {
 	notes.SetPlaceHolder("Enter notes...")
 	clock_container := container.NewVBox(clock, widget.NewButton("Skip", func() {
 		log.Println("skipped")
+		end_time = time.Now()
 		remaining = time.Until(time.Now())
 	}))
 	notesCont := container.NewVBox(widget.NewRichTextWithText("Notes for period"), notes)
@@ -57,7 +58,7 @@ func Main(starting_period string) {
 					period = "work"
 					length = period_work
 				}
-				notify(fmt.Sprintf("%s is up! Next cycle is %d minutes", strings.Title(last_period), length))
+				notify(fmt.Sprintf("%s period is over! Next %s cycle is %d minutes", strings.Title(last_period), strings.Title(period), length))
 				log.Println("Notes were:", notes.Text)
 				write_notes(notes.Text)
 				notes.SetText("")
