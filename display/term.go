@@ -104,7 +104,7 @@ func notify(text string) {
 }
 
 func write_notes(content string) {
-	f, err := os.OpenFile("notes.md", os.O_APPEND|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(time.Now().Format("2006_01_02_notes.md"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Println(err)
 	}
