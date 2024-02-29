@@ -25,11 +25,8 @@ func Main(starting_period string) {
 	w := a.NewWindow("Skjald")
 
 	clock := widget.NewLabel("Period Timer")
-	startPeriod(clock, period)
 	progress := widget.NewProgressBar()
-	progress.Min = 0
-	progress.Max = remaining.Seconds()
-	period_length = float64(remaining.Seconds())
+	startPeriod(clock, period, progress)
 
 	notes := widget.NewMultiLineEntry()
 	notes.SetPlaceHolder("Enter notes...")
@@ -53,7 +50,7 @@ func Main(starting_period string) {
 
 				if period == "work" {
 					period = "rest"
-					length = viper.GetInt("period_work")
+					length = viper.GetInt("period_rest")
 				} else if period == "rest" {
 					period = "work"
 					length = viper.GetInt("period_work")
@@ -65,10 +62,9 @@ func Main(starting_period string) {
 				log.Println("Notes were:", notes.Text)
 				write_notes(notes.Text)
 				notes.SetText("")
-				startPeriod(clock, period)
+				startPeriod(clock, period, progress)
 			}
 			updateTime(clock)
-			fmt.Println(period_length - remaining.Seconds())
 			progress.SetValue(period_length - remaining.Seconds())
 		}
 	}()
@@ -76,7 +72,7 @@ func Main(starting_period string) {
 
 }
 
-func startPeriod(clock *widget.Label, period string){
+func startPeriod(clock *widget.Label, period string, progress *widget.ProgressBar){
 	start_time = time.Now()
 	if period == "work" {
 		end_time = start_time.Add(time.Minute * time.Duration(viper.GetInt("period_work")))
@@ -86,6 +82,10 @@ func startPeriod(clock *widget.Label, period string){
 		end_time = start_time.Add(time.Minute * time.Duration(viper.GetInt("period_lunch")))
 	}
 	remaining = time.Until(end_time)
+
+	progress.Min = 0
+	progress.Max = remaining.Seconds()
+	period_length = float64(remaining.Seconds())
 }
 
 func updateTime(clock *widget.Label) {
