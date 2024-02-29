@@ -12,10 +12,8 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
+	"github.com/spf13/viper"
 )
-var period_work int = 1
-var period_rest int = 5
-var period_lunch int = 30
 var start_time = time.Now()
 var end_time = time.Now()
 var remaining time.Duration = 0
@@ -55,13 +53,13 @@ func Main(starting_period string) {
 
 				if period == "work" {
 					period = "rest"
-					length = period_rest
+					length = viper.GetInt("period_work")
 				} else if period == "rest" {
 					period = "work"
-					length = period_work
+					length = viper.GetInt("period_work")
 				} else if period == "lunch" {
 					period = "work"
-					length = period_work
+					length = viper.GetInt("period_work")
 				}
 				notify(fmt.Sprintf("%s period is over! Next %s cycle is %d minutes", strings.Title(last_period), strings.Title(period), length))
 				log.Println("Notes were:", notes.Text)
@@ -81,11 +79,11 @@ func Main(starting_period string) {
 func startPeriod(clock *widget.Label, period string){
 	start_time = time.Now()
 	if period == "work" {
-		end_time = start_time.Add(time.Minute * time.Duration(period_work))
+		end_time = start_time.Add(time.Minute * time.Duration(viper.GetInt("period_work")))
 	} else if period == "rest" {
-		end_time = start_time.Add(time.Minute * time.Duration(period_rest))
+		end_time = start_time.Add(time.Minute * time.Duration(viper.GetInt("period_rest")))
 	} else if period == "lunch" {
-		end_time = start_time.Add(time.Minute * time.Duration(period_lunch))
+		end_time = start_time.Add(time.Minute * time.Duration(viper.GetInt("period_lunch")))
 	}
 	remaining = time.Until(end_time)
 }
