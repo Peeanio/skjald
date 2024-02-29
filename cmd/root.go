@@ -6,7 +6,7 @@ package cmd
 
 import (
 	"os"
-	"fmt"
+	// "fmt"
 	"skjald/v2/display"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -61,10 +61,18 @@ func initConfig() {
 
 	viper.AutomaticEnv() // read in environment variables that match
 
-	// If a config file is found, read it in.
-	err := viper.ReadInConfig();
+	// If a config file is found, read it in. on failure, set vars and write
+	err := viper.ReadInConfig()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Using config file failed:", viper.ConfigFileUsed())
-		os.Exit(1)
+		if viper.IsSet("period_work") == false {
+			viper.Set("period_work", 25)
+		}
+		if viper.IsSet("period_rest") == false {
+			viper.Set("period_rest", 5)
+		}
+		if viper.IsSet("period_lunch") == false {
+			viper.Set("period_lunch", 30)
+		}
+		viper.WriteConfig()
 	}
 }
