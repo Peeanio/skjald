@@ -54,14 +54,15 @@ func Main(starting_period string) {
 				} else if period == "rest" {
 					period = "work"
 					length = viper.GetInt("period_work")
+					log.Println("Notes were:", notes.Text)
+					write_notes(notes.Text)
+					notes.SetText("")
 				} else if period == "lunch" {
 					period = "work"
 					length = viper.GetInt("period_work")
 				}
 				notify(fmt.Sprintf("%s period is over! Next %s cycle is %d minutes", strings.Title(last_period), strings.Title(period), length))
-				log.Println("Notes were:", notes.Text)
-				write_notes(notes.Text)
-				notes.SetText("")
+
 				startPeriod(clock, period, progress)
 			}
 			updateTime(clock)
